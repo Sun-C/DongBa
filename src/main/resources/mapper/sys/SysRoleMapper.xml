@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cy.pj.sys.dao.SysRoleDao">
+    <!-- 在mybatis中可以通过sql元素定义SQL共性内容 ,
+                        假如其它元素中用到此部分内容可以基于include元素进行包含-->
+    <sql id="queryWhereId">
+        FROM `sys_roles`
+        <where>
+            <if test="name != null and name != ''">
+                `name` LIKE concat("%",#{name},"%")
+            </if>
+        </where>
+    </sql>
+    <update id="doUpdataObject">
+        UPDATE `sys_roles` SET name=#{name},note=#{note},modifiedTime=now(),modifiedUser=#{modifiedUser}
+        WHERE id=#{id}
+    </update>
+    <!--resultMap是mybatis里的高级映射(自定义映射)-->
+    <resultMap id="doFindRoleMenuId" type="com.cy.pj.sys.bo.SysRoleMenuBo">
+        <!--collention 是用于一对多映射 1)property为resultMap中type类型中的一个属性
+            2) ofType为property对应属性集合中的属性类型
+            3)id为上次查询结果中某一列的值
+            4)select的值为命名的一个查询空间-->
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="note" property="note"/>
+        <collection property="menuIds" column="id" ofType="integer" select="com.cy.pj.sys.dao.SysRoleMenusDao.doFindRoleMenu">
+        </collection>
+    </resultMap>
+    <!--基于角色id找到角色信息和菜单信息 resultMap 一般应用于mybatis查询中的高级映射(自定义映射)-->
+    <select id="doFindRoleMenuId" resultMap="doFindRoleMenuId">
+        SELECT `name`,`note` FROM sys_roles WHERE id = #{id}
+    </select>
+    <!--查询行数记录-->
+    <select id="getRowCount" resultType="int">
+        SELECT COUNT(*)
+        <include refid="queryWhereId"/>
+    </select>
+    <!--查询SysRole的信息-->
+    <select id="doFindPageObjects" resultType="com.cy.pj.sys.entity.SysRole">
+        SELECT `id`,`name`,`note`,`createdTime`,`modifiedTime`,`createdUser`,`modifiedUser`
+        <include refid="queryWhereId"/>
+        ORDER BY `createdTime` DESC
+        LIMIT #{startIndex},#{pageSize}
+    </select>
+
+    <!-- useGeneratedKeys 表示使用insert操作的自增主键值 keyProperty 表示将自增主键值赋值给参数对象的id属性 -->
+    <insert id="doSaveObject" parameterType="com.cy.pj.sys.entity.SysRole" useGeneratedKeys="true"
+            keyProperty="id" >
+        INSERT INTO sys_roles
+        (`name`,`note`,`createdTime`,`modifiedTime`,`createdUser`,`modifiedUser`)
+        values
+        (#{name},#{note},now(),now(),#{createdUser},#{modifiedUser})
+    </insert>
+    <!--根据id进行删除SysLog信息健壮性的写法-->
+    <!--    <delete id="deleteSysLogByIds">
+            DELETE FROM sys_logs
+            <choose>
+                <when test="ids != null and ids.length>0">
+                    <where>
+                        <foreach collection="ids" item="id" open="(" close=")" separator="or">
+                            id=#{id}
+                        </foreach>
+                    </where>
+                </when>
+                <otherwise>
+                    <where>
+                        1=2
+                    </where>
+                </otherwise>
+            </choose>
+        </delete>-->
+</mapper>
