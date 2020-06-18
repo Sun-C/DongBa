@@ -1,5 +1,6 @@
 package com.cy.pj.sys.service;
 
+import com.cy.pj.sys.bo.SysUserDeptBo;
 import com.cy.pj.sys.common.bo.PageObject;
 import com.cy.pj.sys.entity.SysUser;
 
@@ -10,7 +11,7 @@ public interface SysUserService {
      * @param username
      * @return
      */
-    PageObject<SysUser> doFindPageObject(Integer pageCurrent, String username);
+    PageObject<SysUserDeptBo> doFindPageObject(Integer pageCurrent, String username);
 
     /**
      * 根据用户id修改用户状态
@@ -18,5 +19,13 @@ public interface SysUserService {
      * @param valid
      * @return
      */
-    int doValidById(Integer id, Integer valid);
+    String doValidById(Integer id, Integer valid,String modifiedUser);
+    /**
+     * 修改用户信息
+     * @param id
+     * @return
+     */
+
+	SysUser doFinObjectById(Integer id);
+	
 }

@@ -12,7 +12,18 @@ import org.springframework.web.bind.annotation.RestController;
 public class SysRoleController {
     @Autowired
     private SysRoleService sysRoleService;
-
+    
+    
+    /**
+     * 查询角色id 和 name
+     * @return
+     */
+    @RequestMapping("doFindRoles")
+    public JsonResult doFindRoles() {
+    	return new JsonResult(sysRoleService.doFindRoles());
+    }
+    
+    
     /**
      * 修改更新角色和菜单的关联信息
      * @param entity
@@ -24,6 +35,7 @@ public class SysRoleController {
         sysRoleService.doUpdateObject(entity,menuIds);
         return new JsonResult("update ok!");
     }
+    
     /**
      * 基于id查询角色信息
      */

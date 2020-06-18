@@ -35,13 +35,16 @@
         SELECT COUNT(*)
         <include refid="queryWhereId"/>
     </select>
-    <!--查询SysLog的信息-->
-    <select id="doFindPageObject" resultType="com.cy.pj.sys.entity.SysUser">
+    <!--查询SysUser的信息-->
+    <select id="doFindPageObject" resultMap="sysUserDeptBo">
         SELECT `id`,`username`,`deptId`,`email`,`mobile`,`valid`,`createdTime`,`modifiedTime`
         <include refid="queryWhereId"/>
         ORDER BY `createdTime` DESC
         LIMIT #{startIndex},#{pageSize}
     </select>
+    <resultMap type="com.cy.pj.sys.bo.SysUserDeptBo" id="sysUserDeptBo">
+    	<association property="sysDept" column="deptId" select="com.cy.pj.sys.dao.SysDeptDao.doFindObject"></association>
+    </resultMap>
 
 
 </mapper>

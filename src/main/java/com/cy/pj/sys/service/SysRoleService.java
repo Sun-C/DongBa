@@ -36,4 +36,9 @@ public interface SysRoleService {
      * 修改角色信息
      */
     int doUpdateObject(SysRole entiey,Integer...menuIds);
+    /**
+     * 查询角色id name
+     * @return
+     */
+	List<SysRole> doFindRoles();
 }

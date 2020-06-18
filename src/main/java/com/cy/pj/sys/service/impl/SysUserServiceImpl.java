@@ -1,5 +1,6 @@
 package com.cy.pj.sys.service.impl;
 
+import com.cy.pj.sys.bo.SysUserDeptBo;
 import com.cy.pj.sys.common.bo.PageObject;
 import com.cy.pj.sys.common.exception.ServiceException;
 import com.cy.pj.sys.dao.SysUserDao;
@@ -20,13 +21,20 @@ public class SysUserServiceImpl implements SysUserService {
     private SysUserDao sysUserDao;
 
     @Override
-    public PageObject<SysUser> doFindPageObject(Integer pageCurrent, String username) {
+    public SysUser doFinObjectById(Integer id) {
+    	if(id==null || id<1)throw new IllegalArgumentException("修改用户信息id异常");
+    	SysUser user = sysUserDao.doFindObjectById(id);
+    	if(user==null)throw new ServiceException("当前用户可能不存在了");
+    	return user;
+    }
+    @Override
+    public PageObject<SysUserDeptBo> doFindPageObject(Integer pageCurrent, String username) {
         if (pageCurrent==null || pageCurrent<1)throw new IllegalArgumentException("查询页码值无效");
         int rows = sysUserDao.getRowCount(username);
         if (rows<1)throw new ServiceException("没有查找到相关用户");
         int pageSize = 3;
         int startIndex = (pageCurrent-1)*pageSize;
-        List<SysUser> list = sysUserDao.doFindPageObject(username,startIndex,pageSize);
+        List<SysUserDeptBo> list = sysUserDao.doFindPageObject(username,startIndex,pageSize);
         return new PageObject<>(pageCurrent,pageSize,rows,list);
     }
 
@@ -37,16 +45,20 @@ public class SysUserServiceImpl implements SysUserService {
      * @return
      */
     @Override
-    public int doValidById(Integer id, Integer valid) {
+    public String doValidById(Integer id, Integer valid,String modifiedUser) {
         //1.参数判断
+    	String msg;
         if(valid==0){
             valid=1;
+            msg = "禁用成功";
         }else {
             valid=0;
+            msg = "启用成功";
         }
-        int row = sysUserDao.doValidById(id,valid);
+        modifiedUser = "admin";
+        int row = sysUserDao.doValidById(id,valid,modifiedUser);
         if (row==0)throw new ServiceException("状态修改失败");
-        return row;
+        return msg;
     }
 
 }

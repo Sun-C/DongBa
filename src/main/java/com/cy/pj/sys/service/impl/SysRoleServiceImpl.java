@@ -23,6 +23,17 @@ public class SysRoleServiceImpl implements SysRoleService {
     private SysRoleMenusDao sysRoleMenusDao;
     @Autowired
     private SysUserRolesDao sysUserRolesDao;
+    
+    
+    @Override
+    public List<SysRole> doFindRoles() {
+    	List<SysRole> listRole = sysRoleDao.doFindRoles();
+    	return listRole;
+    }
+    
+    /**
+     * 分页查询角色
+     */
     @Override
     public PageObject<SysRole> doFindPageObjects(String name,Integer pageCurrent) {
         int rowCount = sysRoleDao.getRowCount(name);

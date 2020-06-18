@@ -3,6 +3,7 @@ package com.cy.pj.sys.dao;
 import com.cy.pj.sys.bo.SysRoleMenuBo;
 import com.cy.pj.sys.entity.SysRole;
 import org.apache.ibatis.annotations.Delete;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 import java.util.Map;
@@ -49,4 +50,11 @@ public interface SysRoleDao {
      * @return
      */
     int doUpdataObject(SysRole entity);
+    
+    /**
+     * 查询角色id 和name
+     * @return
+     */
+    @Select("SELECT id,name FROM sys_roles")
+	List<SysRole> doFindRoles();
 }
